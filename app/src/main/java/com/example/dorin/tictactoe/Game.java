@@ -6,7 +6,7 @@ public class Game {
     public TileState[][] board;
 
     public Boolean playerOneTurn;  // true if player 1's turn, false if player 2's turn
-    private int movesPlayed;
+    public int movesPlayed;
     private Boolean gameOver;
 
     public Game() {
@@ -25,9 +25,11 @@ public class Game {
         for (int i = 0; i < 3; i++) {
             // checking rows
             if (board[i][0] == board[i][1] && board[i][1] == board[i][2] && board[i][0] != TileState.BLANK) {
+                // if TileState is cross, than player one won
                 if (board[i][0] == TileState.CROSS) {
                     return GameState.PLAYER_ONE;
                 }
+                // else player two won
                 else {
                     return GameState.PLAYER_TWO;
                 }
@@ -83,6 +85,16 @@ public class Game {
             }
         }
         return TileState.INVALID;
+    }
+
+    // method to save TileState of button
+    public String getBoard(int x, int y) {
+        return board[x][y].toString();
+    }
+
+    // method to restore TileState of button
+    public void setBoard(int x, int y, String boardstate) {
+        board[x][y] = TileState.valueOf(boardstate);
     }
 
     public Boolean playerOnTurn() {

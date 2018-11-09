@@ -3,24 +3,17 @@ package com.example.dorin.tictactoe;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageButton;
-import android.widget.GridLayout;
-import android.widget.GridView;
-import android.util.Log;
 import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity {
 
     Game game;
     ImageButton b1, b2, b3, b4, b5, b6, b7, b8, b9;
+    TextView textView;
 
     // put all button names in a list
     String[] buttons = {"button1", "button2", "button3", "button4", "button5", "button6", "button7", "button8" , "button9"};
-
-    TextView textView;
-    private GridView gridView;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +49,17 @@ public class MainActivity extends AppCompatActivity {
         outState.putString("but9", b9.getTag().toString());
         outState.putString("text", textView.getText().toString());
         outState.putBoolean("player", game.playerOneTurn);
+        outState.putInt("movesplayed", game.movesPlayed);
+        // save TileState for every button
+        outState.putString("board1", game.getBoard(0, 0));
+        outState.putString("board2", game.getBoard(1, 0));
+        outState.putString("board3", game.getBoard(2, 0));
+        outState.putString("board4", game.getBoard(0, 1));
+        outState.putString("board5", game.getBoard(1, 1));
+        outState.putString("board6", game.getBoard(2, 1));
+        outState.putString("board7", game.getBoard(0, 2));
+        outState.putString("board8", game.getBoard(1, 2));
+        outState.putString("board9", game.getBoard(2, 2));
     }
 
     @Override
@@ -63,6 +67,7 @@ public class MainActivity extends AppCompatActivity {
         super.onRestoreInstanceState(inState);
         textView.setText(inState.getString("text"));
         game.playerOneTurn = inState.getBoolean("player");
+        game.movesPlayed = inState.getInt("movesplayed");
         b1.setTag(inState.getString("but1"));
         b2.setTag(inState.getString("but2"));
         b3.setTag(inState.getString("but3"));
@@ -72,41 +77,35 @@ public class MainActivity extends AppCompatActivity {
         b7.setTag(inState.getString("but7"));
         b8.setTag(inState.getString("but8"));
         b9.setTag(inState.getString("but9"));
+        // restore TileState for every button
+        game.setBoard(0, 0, inState.getString("board1"));
+        game.setBoard(1, 0, inState.getString("board2"));
+        game.setBoard(2, 0, inState.getString("board3"));
+        game.setBoard(0, 1, inState.getString("board4"));
+        game.setBoard(1, 1, inState.getString("board5"));
+        game.setBoard(2, 1, inState.getString("board6"));
+        game.setBoard(0, 2, inState.getString("board7"));
+        game.setBoard(1, 2, inState.getString("board8"));
+        game.setBoard(2, 2, inState.getString("board9"));
 
-        // for iterating over rows
-        int ro = 0;
-        // for iterating over columns
-        int co = 0;
-        // iterate over all buttons
+        // iterate over all buttons to set images
         for (String part: buttons) {
             int id = getResources().getIdentifier(part, "id", getPackageName());
             ImageButton but = findViewById(id);
             // if button is blank
             if (but.getTag() == "0") {
                 but.setImageResource(0);
-                game.board[ro % 3][co] = TileState.BLANK;
             // if button is a cross
-            }
-            else if (but.getTag() == "1") {
+            } else if (but.getTag() == "1") {
                 but.setImageResource(R.drawable.cross);
-                game.board[ro % 3][co] = TileState.CROSS;
             // if button is a circle
-            }
-            else if (but.getTag() == "2") {
+            } else if (but.getTag() == "2") {
                 but.setImageResource(R.drawable.circle);
-                game.board[ro % 3][co] = TileState.CIRCLE;
             }
-            // only increase column when row is 2
-            if (ro == 2) {
-                co++;
-            }
-            // ro is always modulo 3
-            ro++;
         }
     }
 
-        public void tileClicked(View view) {
-
+    public void tileClicked(View view) {
         if (game.won() == GameState.IN_PROGRESS) {
             // save button where is clicked on
             ImageButton button = (ImageButton) view;
@@ -198,7 +197,9 @@ public class MainActivity extends AppCompatActivity {
         for (String part: buttons) {
             int id = getResources().getIdentifier(part, "id", getPackageName());
             ImageButton but = findViewById(id);
+            // reset image for every button
             but.setImageResource(0);
+            // reset tag for every button
             but.setTag(0);
         }
         textView.setText("Player one turn");
