@@ -1,16 +1,20 @@
 package com.example.dorin.tictactoe;
 
+import android.os.CountDownTimer;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import java.util.Random;
 
 public class MainActivity extends AppCompatActivity {
 
     Game game;
+    // all the 'cells' of the board
     ImageButton b1, b2, b3, b4, b5, b6, b7, b8, b9;
     TextView textView;
+    ImageButton computerButton;
 
     // put all button names in a list
     String[] buttons = {"button1", "button2", "button3", "button4", "button5", "button6", "button7", "button8" , "button9"};
@@ -30,7 +34,7 @@ public class MainActivity extends AppCompatActivity {
         b9 = findViewById(R.id.button9);
 
         textView = findViewById(R.id.textView);
-        textView.setText("Player one turn");
+        textView.setText("You're turn");
 
         game = new Game();
     }
@@ -38,6 +42,7 @@ public class MainActivity extends AppCompatActivity {
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
 
+        // save variables for rotating mobile
         outState.putString("but1", b1.getTag().toString());
         outState.putString("but2", b2.getTag().toString());
         outState.putString("but3", b3.getTag().toString());
@@ -65,6 +70,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onRestoreInstanceState(Bundle inState) {
         super.onRestoreInstanceState(inState);
+
+        // restore variables after rotating mobile
         textView.setText(inState.getString("text"));
         game.playerOneTurn = inState.getBoolean("player");
         game.movesPlayed = inState.getInt("movesplayed");
@@ -106,7 +113,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void tileClicked(View view) {
-        if (game.won() == GameState.IN_PROGRESS) {
+        // if player one on turn
+        if (game.won() == GameState.IN_PROGRESS && game.playerOneTurn) {
+
             // save button where is clicked on
             ImageButton button = (ImageButton) view;
             // get row and column of button in grid
@@ -174,25 +183,83 @@ public class MainActivity extends AppCompatActivity {
         }
         if (game.won() == GameState.IN_PROGRESS) {
             if (game.playerOnTurn()) {
-                textView.setText("Player one turn");
+                textView.setText("You're turn");
             }
             else {
-                textView.setText("Player two turn");
+                textView.setText("Computers turn");
+                int row = 0;
+                int column = 0;
+                String check;
+                Boolean checked = false;
+                while (checked == false) {
+                    Random r = new Random();
+                    // 4 exclusive and 1 inclusive for random number of column and row
+                    row = r.nextInt((3 - 1) + 1);
+                    column = r.nextInt((3 - 1) + 1);
+                    // check if cell is empty, else take another random number
+                    check = game.check(row, column);
+                    if (check == "true") {
+                        checked = true;
+                    }
+                }
+                // fill in computers turn
+                TileState state = game.fillin(row, column);
+                computerButton = findViewById(R.id.button1);
+                // look for button which computer has choose
+                if (row == 0 && column == 0) {
+                    computerButton = findViewById(R.id.button1);
+                }
+                else if (row == 1 && column == 0) {
+                    computerButton = findViewById(R.id.button2);
+                }
+                else if (row == 2 && column == 0) {
+                    computerButton = findViewById(R.id.button3);
+                }
+                else if (row == 0 && column == 1) {
+                    computerButton = findViewById(R.id.button4);
+                }
+                else if (row == 1 && column == 1) {
+                    computerButton = findViewById(R.id.button5);
+                }
+                else if (row == 2 && column == 1) {
+                    computerButton = findViewById(R.id.button6);
+                }
+                else if (row == 0 && column == 2) {
+                    computerButton = findViewById(R.id.button7);
+                }
+                else if (row == 1 && column == 2) {
+                    computerButton = findViewById(R.id.button8);
+                }
+                else if (row == 2 && column == 2) {
+                    computerButton = findViewById(R.id.button9);
+                }
+                // wait 3 seconds for 'thinking' for the computer
+                new CountDownTimer(3000, 1000) {
+                    public void onTick(long millisUntilFinished) {
+                       // every second nothing happen
+                    }
+                    public void onFinish() {
+                        // set imageButton to circle for computer and it's users turn
+                        computerButton.setImageResource(R.drawable.circle);
+                        textView.setText("You're turn");
+                    }
+                }.start();
             }
         }
+        // check if game is won
         if (game.won() == GameState.PLAYER_ONE) {
-            textView.setText("Player one won!");
+            textView.setText("You won!");
         }
         else if (game.won() == GameState.PLAYER_TWO) {
-            textView.setText("Player two won!");
+            textView.setText("You lose!");
         }
         else if (game.won() == GameState.DRAW) {
             textView.setText("Draw!");
         }
     }
 
+    // method for reset the game
     public void resetClicked(View view) {
-
         // iterate over all buttons
         for (String part: buttons) {
             int id = getResources().getIdentifier(part, "id", getPackageName());
