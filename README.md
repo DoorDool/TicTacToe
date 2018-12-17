@@ -1,6 +1,6 @@
 # TicTacToe
 
-This is an app where you can play TicTacToe with two players.
+This is an app where you can play TicTacToe againt the computer.
 
 <img src="https://github.com/DoorDool/TicTacToe/blob/master/app/src/main/res/drawable/Layout.png" width="300">
 
