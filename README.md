@@ -2,7 +2,7 @@
 
 This is an app where you can play TicTacToe againt the computer.
 
-<img src="https://github.com/DoorDool/TicTacToe/blob/master/app/src/main/res/drawable/Layout.png" width="300">
+<img src="https://github.com/DoorDool/TicTacToe/blob/master/app/src/main/res/drawable/Layout.png" width="250">
 
 If player one click on a button, a cross will appeaer. After that it's the computers turn and that will be cost three seconds. 
 When you clicked on the reset button the game is over and all the buttons are empty again.
