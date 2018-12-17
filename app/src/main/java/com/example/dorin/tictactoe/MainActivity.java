@@ -241,20 +241,27 @@ public class MainActivity extends AppCompatActivity {
                     public void onFinish() {
                         // set imageButton to circle for computer and it's users turn
                         computerButton.setImageResource(R.drawable.circle);
+                        computerButton.setTag(2);
                         textView.setText("You're turn");
                     }
                 }.start();
             }
         }
-        // check if game is won
-        if (game.won() == GameState.PLAYER_ONE) {
-            textView.setText("You won!");
+        // when it is computers turn, wait 3 seconds for thinking of computer has won
+        if (game.playerOnTurn()) {
+            // wait 3 seconds for 'thinking' for the computer
+            new CountDownTimer(3000, 1000) {
+                public void onTick(long millisUntilFinished) {
+                    // every second nothing happen
+                }
+                public void onFinish() {
+                    // check if game is won
+                    winnerCheck();
+                }
+            }.start();
         }
-        else if (game.won() == GameState.PLAYER_TWO) {
-            textView.setText("You lose!");
-        }
-        else if (game.won() == GameState.DRAW) {
-            textView.setText("Draw!");
+        else {
+            winnerCheck();
         }
     }
 
@@ -271,5 +278,18 @@ public class MainActivity extends AppCompatActivity {
         }
         textView.setText("Player one turn");
         game = new Game();
+    }
+
+    public void winnerCheck() {
+        // check if game is won
+        if (game.won() == GameState.PLAYER_ONE) {
+            textView.setText("You won!");
+        }
+        else if (game.won() == GameState.PLAYER_TWO) {
+            textView.setText("You lose!");
+        }
+        else if (game.won() == GameState.DRAW) {
+            textView.setText("Draw!");
+        }
     }
 }
